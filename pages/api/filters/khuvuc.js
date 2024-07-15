@@ -1,0 +1,14 @@
+import { createConnection } from "@lib/mysql";
+
+export default async function handler(req, res) {
+  try {
+    const connection = await createConnection();
+    const [rows] = await connection.query('SELECT DISTINCT KhuVuc FROM Dim_TinhThanh');
+    await connection.end();
+
+    const uniqueKhuVuc = rows.map(row => row.KhuVuc);
+    res.status(200).json(uniqueKhuVuc);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
