@@ -29,6 +29,11 @@ export default Category;
 export const getStaticPaths = () => {
   const allCategories = getTaxonomy(`content/${blog_folder}`, "categories");
 
+  if (!allCategories) {
+    console.error("Failed to fetch categories");
+    return { paths: [], fallback: false };
+  }
+
   const paths = allCategories.map((category) => ({
     params: {
       category: category,
