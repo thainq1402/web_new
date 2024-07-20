@@ -40,20 +40,30 @@ export const getStaticPaths = () => {
     },
   }));
 
+  console.log("Generated paths:", paths);
   return { paths, fallback: false };
 };
 
 // category page data
-export const getStaticProps = ({ params }) => {
-  const posts = getSinglePage(`content/${blog_folder}`);
-  const filterPosts = posts.filter((post) =>
-    post.frontmatter.categories.find((category) =>
-      slugify(category).includes(params.category)
-    )
-  );
-  const authors = getSinglePage("content/authors");
+export const getStaticProps = async ({ params }) => {
+  console.log("Fetching static props for category:", params.category);
 
-  return {
-    props: { posts: filterPosts, category: params.category, authors: authors },
-  };
+  try {
+    const posts = getSinglePage(`content/${blog_folder}`);
+    const filterPosts = posts.filter((post) =>
+      post.frontmatter.categories.find((category) =>
+        slugify(category).includes(params.category)
+      )
+    );
+    const authors = getSinglePage("content/authors");
+
+    return {
+      props: { posts: filterPosts, category: params.category, authors: authors },
+    };
+  } catch (error) {
+    console.error("Error fetching static props:", error);
+    return {
+      notFound: true,
+    };
+  }
 };
